@@ -15,8 +15,13 @@ const getMatches = async (req: Request, res: Response):Promise<void> => {
 
 const createMatch = async (req: Request, res: Response):Promise<void> => {
   const { body } = req;
-  const { status, matchCreated } = await matchesService.createMatch(body);
-  res.status(status).json(matchCreated);
+  if (body.homeTeamId === body.awayTeamId) {
+    res.status(422).json({ message: 'It is not possible to create a match with two equal teams' });
+  } else {
+    const { status, matchCreated } = await matchesService.createMatch(body);
+    if (status === 404) res.status(status).json({ message: 'There is no team with such id!' });
+    else res.status(status).json(matchCreated);
+  }
 };
 
 const finishMatch = async (req: Request, res: Response):Promise<void> => {

@@ -29,7 +29,15 @@ const getMatchesInProgress = async (progress: boolean) => {
   return { status: 200, matchesFound };
 };
 
+const checkTeamsId = async (homeTeamId:number, awayTeamId:number) => {
+  const homeTeam = await teamsService.findTeam(homeTeamId);
+  const awayTeam = await teamsService.findTeam(awayTeamId);
+  return !(homeTeam.status !== 200 || awayTeam.status !== 200);
+};
+
 const createMatch = async (match: ICreateMatch) => {
+  const check = await checkTeamsId(match.homeTeamId, match.awayTeamId);
+  if (check === false) return { status: 404 };
   const result = await matchModel.create({
     homeTeam: match.homeTeamId,
     homeTeamGoals: match.homeTeamGoals,
