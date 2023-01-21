@@ -5,7 +5,7 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import usersModel from '../database/models/usersModel';
-// import token from '../utils/token';
+import token from '../utils/token';
 
 import { Response } from 'superagent';
 
@@ -50,17 +50,31 @@ describe('Testes de Login', () => {
     expect(result.body).to.be.deep.equal({ message: 'Incorrect email or password' });
   });
 
-  // it('É possível realizar o login com sucesso.', async () => {
-  //   sinon.stub(usersModel, 'findOne').resolves(validUser as any);
+  it('Não é possível realizar o login com formato de e-mail incorreto.', async () => {
+    const result = await chai.request(app).post('/login').send({ email: "guyddo", password: invalidUser.password });
+    expect(result.status).to.be.equal(401);
+    expect(result.body).to.be.deep.equal({ message: 'Incorrect email or password' });
+  });
 
-  //   const result = await chai.request(app).post('/login').send({ email: validUser.email, password: validUser.password });
-  //   console.log(result.body);
+  it('É possível realizar o login com sucesso.', async () => {
+    sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
+    const result = await chai.request(app).post('/login').send({ email: validUser.email, password: "secret_admin" });
+    expect(result.status).to.be.equal(200);
+    expect(result.body).to.have.property('token');
+  });
 
-  //   // const decoded = token.verifyToken(result.body.token);
+  it('Rota validate retorna "Token not found" se não tiver o Authorization', async () => {
+    const result = await chai.request(app).get('/login/validate');
+    expect(result.status).to.be.equal(400);
+    expect(result.body.message).to.have.equal('Token not found');
+  });
 
-  //   expect(result.status).to.be.equal(200);
-  //   // expect(result.body).to.have.property('token');
-  //   // expect(decoded.email).to.be.equal('guyddogl@gmail.com');
-  //   // expect(decoded.role).to.be.equal('admin');
-  // });
+  it('Rota validate retorna a role do usuário', async () => {
+    sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
+    const result = await chai.request(app).get('/login/validate').set('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQzMDQwMzUsImV4cCI6MTY3NDMyNTYzNX0.nZS7CdjfCueciyAdMy2ezBXi3A_qWZbdbOvo036Qh1M');
+    expect(result.status).to.be.equal(200);
+    expect(result.body).to.have.property('role');
+    expect(result.body.role).to.have.equal('admin');
+  });
+
 });
