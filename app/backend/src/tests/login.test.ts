@@ -5,15 +5,10 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import usersModel from '../database/models/usersModel';
-import token from '../utils/token';
-
-import { Response } from 'superagent';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
-
-// const valideToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQzMDQwMzUsImV4cCI6MTY3NDMyNTYzNX0.nZS7CdjfCueciyAdMy2ezBXi3A_qWZbdbOvo036Qh1M'
 
 const invalidUser = {
   username: 'guyddogl',
@@ -77,7 +72,7 @@ describe('Testes de Login', () => {
 
   it('Rota validate retorna a role do usuário', async () => {
     sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
-    const result = await chai.request(app).get('/login/validate').set('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQzMDQwMzUsImV4cCI6MTY3NDMyNTYzNX0.nZS7CdjfCueciyAdMy2ezBXi3A_qWZbdbOvo036Qh1M');
+    const result = await chai.request(app).get('/login/validate').set('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQzMjU3NzcsImV4cCI6MTY3NDM0NzM3N30.Gutn6SHgp-xFTVM6cK1AfxjgfQsQjV2EpTuF4WCDmyQ');
     expect(result.status).to.be.equal(200);
     expect(result.body).to.have.property('role');
     expect(result.body.role).to.have.equal('admin');
