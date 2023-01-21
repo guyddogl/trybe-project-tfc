@@ -45,13 +45,17 @@ const createMatch = async (match: ICreateMatch) => {
     awayTeamGoals: result.dataValues.awayTeamGoals,
     inProgress: result.dataValues.inProgress,
   };
-  console.log(matchCreated);
-
   return { status: 201, matchCreated };
+};
+
+const finishMatch = async (id: string) => {
+  await matchModel.update({ inProgress: false }, { where: { id } });
+  return { status: 200, message: 'Finished' };
 };
 
 export default {
   getMatches,
   getMatchesInProgress,
   createMatch,
+  finishMatch,
 };

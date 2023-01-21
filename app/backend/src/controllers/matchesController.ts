@@ -19,7 +19,14 @@ const createMatch = async (req: Request, res: Response):Promise<void> => {
   res.status(status).json(matchCreated);
 };
 
+const finishMatch = async (req: Request, res: Response):Promise<void> => {
+  const { id } = req.params;
+  const { status, message } = await matchesService.finishMatch(id);
+  res.status(status).json({ message });
+};
+
 export default {
   getMatches,
   createMatch,
+  finishMatch,
 };

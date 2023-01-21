@@ -17,7 +17,6 @@ describe('Testes da rota matches', () => {
   it('Retorna todos os jogos', async () => {
     const result = await chai.request(app).get('/matches');
     expect(result.status).to.be.equal(200);
-    // expect(result.body).to.be.deep.equal({ message: 'All fields must be filled' });
   });
 
   it('Retorna todos os jogos com inProgress = true', async () => {
@@ -30,11 +29,14 @@ describe('Testes da rota matches', () => {
     expect(result.status).to.be.equal(200);
   });
 
-  // it('É possível realizar o login com sucesso.', async () => {
-  //   sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
-  //   const result = await chai.request(app).post('/login').send({ email: validUser.email, password: "secret_admin" });
-  //   expect(result.status).to.be.equal(200);
-  //   expect(result.body).to.have.property('token');
-  // });
+  it('É possível criar um jogo', async () => {
+    const result = await chai.request(app).post('/matches').send({
+      homeTeamId: 16,
+      awayTeamId: 8,
+      homeTeamGoals: 2,
+      awayTeamGoals: 2
+    });
+    expect(result.status).to.be.equal(201);
+  });
 
 });
