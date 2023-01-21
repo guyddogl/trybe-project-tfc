@@ -1,8 +1,8 @@
 import matchModel from '../database/models/matchModel';
 import teamsService from './teamsService';
-import { Match } from '../interfaces/IMatch';
+import { IMatch, ICreateMatch } from '../interfaces/IMatch';
 
-const getTeamName = async (match: Match) => {
+const getTeamName = async (match: IMatch) => {
   const homeTeamName = await teamsService.findTeam(match.homeTeam);
   const awayTeamName = await teamsService.findTeam(match.awayTeam);
   return {
@@ -29,7 +29,29 @@ const getMatchesInProgress = async (progress: boolean) => {
   return { status: 200, matchesFound };
 };
 
+const createMatch = async (match: ICreateMatch) => {
+  const result = await matchModel.create({
+    homeTeam: match.homeTeamId,
+    homeTeamGoals: match.homeTeamGoals,
+    awayTeam: match.awayTeamId,
+    awayTeamGoals: match.awayTeamGoals,
+    inProgress: true,
+  });
+  const matchCreated = {
+    id: result.dataValues.id,
+    homeTeamId: result.dataValues.homeTeam,
+    homeTeamGoals: result.dataValues.homeTeamGoals,
+    awayTeamId: result.dataValues.awayTeam,
+    awayTeamGoals: result.dataValues.awayTeamGoals,
+    inProgress: result.dataValues.inProgress,
+  };
+  console.log(matchCreated);
+
+  return { status: 201, matchCreated };
+};
+
 export default {
   getMatches,
   getMatchesInProgress,
+  createMatch,
 };

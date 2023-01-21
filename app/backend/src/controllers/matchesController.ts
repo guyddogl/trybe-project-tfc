@@ -13,6 +13,13 @@ const getMatches = async (req: Request, res: Response):Promise<void> => {
   }
 };
 
+const createMatch = async (req: Request, res: Response):Promise<void> => {
+  const { body } = req;
+  const { status, matchCreated } = await matchesService.createMatch(body);
+  res.status(status).json(matchCreated);
+};
+
 export default {
   getMatches,
+  createMatch,
 };
