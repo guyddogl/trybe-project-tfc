@@ -5,7 +5,7 @@ const getTeams = async () => {
   return { status: 200, teamsFound };
 };
 
-const findTeam = async (id: string) => {
+const findTeam = async (id: string | number) => {
   const teamFound = await teamsModel.findOne({ where: { id } });
   if (!teamFound) {
     return { status: 401, message: 'Result not found' };
