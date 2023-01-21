@@ -8,11 +8,11 @@ const findUser = async (email: string, password: string): Promise<IResponse> => 
   if (!userFound) {
     return { status: 401, message: 'Incorrect email or password' };
   }
-  const checkPassword = await bcrypt.compare(password, userFound.password);
+  const checkPassword = await bcrypt.compare(password, userFound.dataValues.password);
   if (checkPassword === false) {
     return { status: 401, message: 'Incorrect email or password' };
   }
-  const userToken = token.generateToken(userFound.dataValues);
+  const userToken = await token.generateToken(userFound.dataValues);
   return { status: 200, message: userToken };
 };
 

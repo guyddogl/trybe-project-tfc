@@ -2,9 +2,6 @@ import teamsModel from '../database/models/teamsModel';
 
 const getTeams = async () => {
   const teamsFound = await teamsModel.findAll();
-  if (!teamsFound) {
-    return { status: 401, message: 'Result not found' };
-  }
   return { status: 200, teamsFound };
 };
 
