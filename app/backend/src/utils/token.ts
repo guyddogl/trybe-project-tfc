@@ -8,6 +8,12 @@ const generateToken = (data: IUser) => {
   return token;
 };
 
+const verifyToken = (token: string) => {
+  const decoded = jwt.verify(token, secret);
+  return decoded;
+};
+
 export default {
   generateToken,
+  verifyToken,
 };
