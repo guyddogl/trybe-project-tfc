@@ -29,7 +29,7 @@ describe('Testes da rota teams', () => {
   it('Retorna erro caso o id não exista', async () => {
     const result = await chai.request(app).get('/teams/100');
     expect(result.status).to.be.equal(401);
-    expect(result.body).to.be.deep.equal({ message: 'Result not found' });
+    expect(result.body).to.be.deep.equal({ message: 'There is no team with such id!' });
   });
 
 });

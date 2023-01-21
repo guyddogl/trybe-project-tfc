@@ -39,4 +39,29 @@ describe('Testes da rota matches', () => {
     expect(result.status).to.be.equal(201);
   });
 
+  it('Não é possível criar um jogo com o ID de um time que não existe', async () => {
+    const result = await chai.request(app).post('/matches').send({
+      homeTeamId: 400,
+      awayTeamId: 8,
+      homeTeamGoals: 2,
+      awayTeamGoals: 2
+    });
+    expect(result.status).to.be.equal(404);
+  });
+
+  it('Não é possível criar um jogo com dois times com o mesmo ID', async () => {
+    const result = await chai.request(app).post('/matches').send({
+      homeTeamId: 8,
+      awayTeamId: 8,
+      homeTeamGoals: 2,
+      awayTeamGoals: 2
+    });
+    expect(result.status).to.be.equal(422);
+  });
+
+  it('É possível finalizar um jogo', async () => {
+    const result = await chai.request(app).patch('/matches/1/finish')
+    expect(result.status).to.be.equal(200);
+  });
+
 });
