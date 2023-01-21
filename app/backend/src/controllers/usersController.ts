@@ -9,6 +9,12 @@ const findUser = async (req: Request, res: Response):Promise<void> => {
   } else res.status(status).json({ message });
 };
 
+const userRole = async (req: Request, res: Response) => {
+  const { role } = req.body.user;
+  res.status(200).json({ role });
+};
+
 export default {
   findUser,
+  userRole,
 };

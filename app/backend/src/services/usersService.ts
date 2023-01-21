@@ -16,6 +16,15 @@ const findUser = async (email: string, password: string): Promise<IResponse> => 
   return { status: 200, message: userToken };
 };
 
+const userRole = async (email: string): Promise<IResponse> => {
+  const userFound = await usersModel.findOne({ where: { email } });
+  if (!userFound) {
+    return { status: 401, message: 'User not found' };
+  }
+  return { status: 200, message: userFound.dataValues.role };
+};
+
 export default {
   findUser,
+  userRole,
 };
