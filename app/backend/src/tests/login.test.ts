@@ -56,6 +56,12 @@ describe('Testes de Login', () => {
     expect(result.body).to.be.deep.equal({ message: 'Incorrect email or password' });
   });
 
+  it('Não é possível realizar o login com a senha incorreta.', async () => {
+    const result = await chai.request(app).post('/login').send({ email: validUser.email, password: "xablau" });
+    expect(result.status).to.be.equal(401);
+    expect(result.body).to.be.deep.equal({ message: 'Incorrect email or password' });
+  });
+
   it('É possível realizar o login com sucesso.', async () => {
     sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
     const result = await chai.request(app).post('/login').send({ email: validUser.email, password: "secret_admin" });
