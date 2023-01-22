@@ -19,7 +19,13 @@ describe('Testes da rota leaderboard', () => {
   });
 
   it('Retorna a classificação considerando away team', async () => {
-    const result = await chai.request(app).get('/leaderboard/team');
+    const result = await chai.request(app).get('/leaderboard/away');
+    expect(result.status).to.be.equal(200);
+    expect(result.body).to.be.an('array');
+  });
+
+  it('Retorna a classificação geral', async () => {
+    const result = await chai.request(app).get('/leaderboard');
     expect(result.status).to.be.equal(200);
     expect(result.body).to.be.an('array');
   });
