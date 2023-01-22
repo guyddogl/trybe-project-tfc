@@ -27,7 +27,6 @@ class App {
     this.app.use(express.json());
     this.app.use(accessControl);
     this.app.use('/login', loginRoute);
-    this.app.use('/login/validate', loginRoute);
     this.app.use('/teams', teamsRoute);
     this.app.use('/matches', matchesRoute);
     this.app.use('/leaderboard', leaderboardRoute);
