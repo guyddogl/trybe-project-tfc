@@ -10,6 +10,8 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQ0MjI5MzMsImV4cCI6MTY3NDQ0NDUzM30.KsKmFKDDfF65Q_USJC2SOm4TvnMa4FZmSCpzSaqFKQc"
+
 const invalidUser = {
   username: 'guyddogl',
   role: 'admin',
@@ -72,7 +74,7 @@ describe('Testes de Login', () => {
 
   it('Rota validate retorna a role do usuário', async () => {
     sinon.stub(usersModel, 'findOne').resolves({ dataValues: validUser } as any);
-    const result = await chai.request(app).get('/login/validate').set('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkeGkuSHhrMWN6QU8wblpSLi5CMzkzdTEwYUVEMFJRMU4zUEFFWFE3SHh0TGpLUEVaQnUuUFciLCJpYXQiOjE2NzQ0MDg3NTgsImV4cCI6MTY3NDQzMDM1OH0.pQb5WFPC-3qmwZblwIfL8_v8ELaud-Ma6VF_d2E2ki0');
+    const result = await chai.request(app).get('/login/validate').set('Authorization', token);
     expect(result.status).to.be.equal(200);
     expect(result.body).to.have.property('role');
     expect(result.body.role).to.have.equal('admin');
