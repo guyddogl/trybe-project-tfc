@@ -61,9 +61,15 @@ const finishMatch = async (id: string) => {
   return { status: 200, message: 'Finished' };
 };
 
+const updateMatch = async (id: string, homeTeamGoals: number, awayTeamGoals: number) => {
+  await matchModel.update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
+  return { status: 200, message: 'Updated' };
+};
+
 export default {
   getMatches,
   getMatchesInProgress,
   createMatch,
   finishMatch,
+  updateMatch,
 };

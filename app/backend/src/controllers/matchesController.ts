@@ -30,8 +30,16 @@ const finishMatch = async (req: Request, res: Response):Promise<void> => {
   res.status(status).json({ message });
 };
 
+const updateMatch = async (req: Request, res: Response):Promise<void> => {
+  const { id } = req.params;
+  const { homeTeamGoals, awayTeamGoals } = req.body;
+  const { status, message } = await matchesService.updateMatch(id, homeTeamGoals, awayTeamGoals);
+  res.status(status).json({ message });
+};
+
 export default {
   getMatches,
   createMatch,
   finishMatch,
+  updateMatch,
 };
