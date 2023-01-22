@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IFullMatch } from '../interfaces/IMatch';
+import { IFullMatch, ITeamMatch } from '../interfaces/IMatch';
 import matchesService from '../services/matchesService';
 import teamsService from '../services/teamsService';
 
@@ -14,26 +14,27 @@ const calculatePoints = (totalPoints: number, match: IFullMatch, query: string):
   return totalPoints + 1;
 };
 
-const calculateVictories = (teamMatchesFound: any, query: string): number => {
+const calculateVictories = (teamMatchesFound: IFullMatch[], query: string): number => {
   if (query === 'home') {
-    return teamMatchesFound.filter((e: any) => e.homeTeamGoals > e.awayTeamGoals).length;
+    return teamMatchesFound.filter((e: IFullMatch) => e.homeTeamGoals > e.awayTeamGoals).length;
   }
-  return teamMatchesFound.filter((e: any) => e.awayTeamGoals > e.homeTeamGoals).length;
+  return teamMatchesFound.filter((e: IFullMatch) => e.awayTeamGoals > e.homeTeamGoals).length;
 };
 
-const calculateDraws = (teamMatchesFound: any): number => {
-  const result = teamMatchesFound.filter((e: any) => e.homeTeamGoals === e.awayTeamGoals).length;
+const calculateDraws = (teamMatchesFound: IFullMatch[]): number => {
+  const result = teamMatchesFound
+    .filter((e: IFullMatch) => e.homeTeamGoals === e.awayTeamGoals).length;
   return result;
 };
 
-const calculateLosses = (teamMatchesFound: any, query: string): number => {
+const calculateLosses = (teamMatchesFound: IFullMatch[], query: string): number => {
   if (query === 'home') {
-    return teamMatchesFound.filter((e: any) => e.homeTeamGoals < e.awayTeamGoals).length;
+    return teamMatchesFound.filter((e: IFullMatch) => e.homeTeamGoals < e.awayTeamGoals).length;
   }
-  return teamMatchesFound.filter((e: any) => e.awayTeamGoals < e.homeTeamGoals).length;
+  return teamMatchesFound.filter((e: IFullMatch) => e.awayTeamGoals < e.homeTeamGoals).length;
 };
 
-const calculateTeamStats = (teamMatchesFound: any, query: string) => {
+const calculateTeamStats = (teamMatchesFound: IFullMatch[], query: string) => {
   const teamStats = {
     totalPoints: 0,
     totalGames: teamMatchesFound.length,
@@ -43,7 +44,8 @@ const calculateTeamStats = (teamMatchesFound: any, query: string) => {
     goalsFavor: 0,
     goalsOwn: 0,
   };
-  teamMatchesFound.map((match: any) => {
+  teamMatchesFound.map((match: IFullMatch) => {
+    console.log(match);
     const points = calculatePoints(teamStats.totalPoints, match, query);
     teamStats.totalPoints = points;
     teamStats.goalsFavor += query === 'home' ? match.homeTeamGoals : match.awayTeamGoals;
@@ -75,21 +77,33 @@ const getTeamMatches = async (id: number, query: string) => {
   };
 };
 
-const getLeaderboard = async (req: Request, res: Response):Promise<void> => {
-  const { query } = req.params;
-  const { teamsFound } = await teamsService.getTeams();
-  const teamsId = teamsFound.map((e) => e.id);
-  const teamMatches = await Promise.all(teamsId.map((team) => getTeamMatches(team, query)));
-  const pointsOrder = teamMatches.sort((a, b) => (
+const sortLeaderboard = (teamMatches: ITeamMatch[]) => teamMatches
+  .sort((a: ITeamMatch, b: ITeamMatch) => (
     b.totalPoints - a.totalPoints
     || b.totalVictories - a.totalVictories
     || b.goalsBalance - a.goalsBalance
     || b.goalsFavor - a.goalsFavor
     || a.goalsOwn - b.goalsOwn
   ));
+
+const getLeaderboard = async (req: Request, res: Response):Promise<void> => {
+  const { query } = req.params;
+  const { teamsFound } = await teamsService.getTeams();
+  const teamsId = teamsFound.map((e) => e.id);
+  const teamMatches = await Promise.all(teamsId.map((team) => getTeamMatches(team, query)));
+  const pointsOrder = sortLeaderboard(teamMatches);
   res.status(200).json(pointsOrder);
 };
 
+// const getGeralLeaderboard = async (req: Request, res: Response):Promise<void> => {
+//   const { teamsFound } = await teamsService.getTeams();
+//   const teamsId = teamsFound.map((e) => e.id);
+//   const teamMatches = await Promise.all(teamsId.map((team) => getTeamMatches(team)));
+//   const pointsOrder = sortLeaderboard(teamMatches);
+//   res.status(200).json(pointsOrder);
+// };
+
 export default {
   getLeaderboard,
+  // getGeralLeaderboard,
 };
