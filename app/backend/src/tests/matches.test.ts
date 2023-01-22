@@ -64,4 +64,12 @@ describe('Testes da rota matches', () => {
     expect(result.status).to.be.equal(200);
   });
 
+  it('É possível atualizar um jogo', async () => {
+    const result = await chai.request(app).patch('/matches/1').send({
+      homeTeamGoals: 2,
+      awayTeamGoals: 2
+    });
+    expect(result.status).to.be.equal(200);
+  });
+
 });
