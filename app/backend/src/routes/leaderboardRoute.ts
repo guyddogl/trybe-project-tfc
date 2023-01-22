@@ -3,7 +3,6 @@ import leaderboardController from '../controllers/leaderboardController';
 
 const routers = Router();
 
-routers.get('/home', leaderboardController.getMatches);
-// routers.get('/away', leaderboardController.getTeams);
+routers.get('/:query', leaderboardController.getLeaderboard);
 
 export default routers;
