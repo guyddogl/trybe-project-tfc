@@ -30,7 +30,7 @@ export interface IFullMatch {
 }
 
 export interface ITeamMatch {
-  name: string,
+  name?: string,
   totalPoints: number,
   totalGames: number,
   totalVictories: number,
