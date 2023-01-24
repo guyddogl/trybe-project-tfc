@@ -147,6 +147,22 @@ const getGeneralLeaderboard = async (req: Request, res: Response): Promise<void>
   res.status(200).json(pointsOrder);
 };
 
+// const getGeneralLeaderboard = async (req: Request, res: Response): Promise<void> => {
+//   const { teamsFound } = await teamsService.getTeams();
+//   const teamsId = teamsFound.map((e) => e.id);
+//   // const teamMatches = await Promise.all(teamsId.map((team) => getTeamMatches(team, 'general')));
+//   // const BRASIL = teamsId.map((team) => getTeamMatches(team, 'general'));
+//   const BRASIL: any = [];
+//   // await Promise.all(async () => {
+//   teamsId.forEach(async (item) => {
+//     const teste = await getTeamMatches(item, 'general');
+//     BRASIL.push(teste);
+//   });
+//   // });
+//   const pointsOrder = sortLeaderboard(BRASIL);
+//   res.status(200).json(pointsOrder);
+// };
+
 export default {
   getLeaderboard,
   getGeneralLeaderboard,
