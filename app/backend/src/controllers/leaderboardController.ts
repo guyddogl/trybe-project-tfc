@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IFullMatch, ITeamMatch } from '../interfaces/IMatch';
+import { IFullMatch, IMatch, ITeamMatch } from '../interfaces/IMatch';
 import matchesService from '../services/matchesService';
 import teamsService from '../services/teamsService';
 
@@ -120,6 +120,27 @@ const getTeamMatches = async (id: number, query: string) => {
   };
 };
 
+const getTeamMatchesTeste = async (id: number, query: string, matchesFound: any[]) => {
+  // const { matchesFound } = await matchesService.getMatches();
+  let teamMatches = [];
+  if (query === 'general') {
+    teamMatches = matchesFound
+      .filter((e) => (e.homeTeamId === id || e.awayTeamId === id) && e.inProgress === false);
+  } else if (query === 'home') {
+    teamMatches = matchesFound.filter((e) => e.homeTeamId === id && e.inProgress === false);
+  } else {
+    teamMatches = matchesFound.filter((e) => e.awayTeamId === id && e.inProgress === false);
+  }
+  const teamStats = calculateTeamStats(teamMatches, query, id);
+  const { teamFound } = await teamsService.findTeam(id);
+  return {
+    name: teamFound?.teamName,
+    ...teamStats,
+    goalsBalance: teamStats.goalsFavor - teamStats.goalsOwn,
+    efficiency: calculateEfficiency(teamMatches.length, teamStats.totalPoints),
+  };
+};
+
 const sortLeaderboard = (teamMatches: ITeamMatch[]) => teamMatches
   .sort((a: ITeamMatch, b: ITeamMatch) => (
     b.totalPoints - a.totalPoints
@@ -142,7 +163,9 @@ const getLeaderboard = async (req: Request, res: Response): Promise<void> => {
 const getGeneralLeaderboard = async (req: Request, res: Response): Promise<void> => {
   const { teamsFound } = await teamsService.getTeams();
   const teamsId = teamsFound.map((e) => e.id);
-  const teamMatches = await Promise.all(teamsId.map((team) => getTeamMatches(team, 'general')));
+  const { matchesFound } = await matchesService.getMatches();
+  const teamMatches = await Promise
+    .all(teamsId.map((team) => getTeamMatchesTeste(team, 'general', matchesFound)));
   const pointsOrder = sortLeaderboard(teamMatches);
   res.status(200).json(pointsOrder);
 };
