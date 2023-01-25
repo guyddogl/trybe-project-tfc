@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IFullMatch, IMatch, ITeamMatch } from '../interfaces/IMatch';
+import { IFullMatch, ITeamMatch } from '../interfaces/IMatch';
 import matchesService from '../services/matchesService';
 import teamsService from '../services/teamsService';
 
@@ -120,8 +120,7 @@ const getTeamMatches = async (id: number, query: string) => {
   };
 };
 
-const getTeamMatchesTeste = async (id: number, query: string, matchesFound: any[]) => {
-  // const { matchesFound } = await matchesService.getMatches();
+const getTeamMatchesTeste = async (id: number, query: string, matchesFound: IFullMatch[]) => {
   let teamMatches = [];
   if (query === 'general') {
     teamMatches = matchesFound
